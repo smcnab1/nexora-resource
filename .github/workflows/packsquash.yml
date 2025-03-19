@@ -17,7 +17,7 @@ jobs:
       - name: Checkout Repository with Full History
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2  # Ensure we have at least one previous commit for git diff
+          fetch-depth: 0  # Fetch entire commit history to allow git diff
 
       - name: Check for Modified Files
         id: filter
@@ -46,6 +46,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Again, ensure full history
 
       - name: Run PackSquash on ${{ matrix.pack_name }}
         uses: ComunidadAylas/PackSquash-action@v4
