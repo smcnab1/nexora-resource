@@ -14,18 +14,23 @@ jobs:
     outputs:
       packs: ${{ steps.filter.outputs.packs }}
     steps:
-      - name: Checkout Repository
+      - name: Checkout Repository with Full History
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Ensure we have at least one previous commit for git diff
 
       - name: Check for Modified Files
         id: filter
         run: |
           PACKS=()
-          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q "^packs/prison/"; then
-            PACKS+=("\"prison\"")
-          fi
-          if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q "^packs/hub/"; then
-            PACKS+=("\"hub\"")
+          BEFORE_COMMIT=$(git rev-parse HEAD^ || echo "")
+          if [ -n "$BEFORE_COMMIT" ]; then
+            if git diff --name-only $BEFORE_COMMIT HEAD | grep -q "^packs/prison/"; then
+              PACKS+=("\"prison\"")
+            fi
+            if git diff --name-only $BEFORE_COMMIT HEAD | grep -q "^packs/hub/"; then
+              PACKS+=("\"hub\"")
+            fi
           fi
           echo "packs=$(echo "[${PACKS[*]}]")" >> $GITHUB_OUTPUT
         shell: bash
