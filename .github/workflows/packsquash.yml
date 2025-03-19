@@ -2,7 +2,7 @@ name: Optimize Resource Packs
 on:
   push:
     branches:
-      - main  # Trigger only on the main branch
+      - main  # Only trigger on the main branch
     paths:
       - 'packs/prison/**'
       - 'packs/hub/**'  # Only trigger if files in these directories change
@@ -22,12 +22,12 @@ jobs:
         run: |
           PACKS=()
           if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q "^packs/prison/"; then
-            PACKS+=("prison")
+            PACKS+=("\"prison\"")
           fi
           if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q "^packs/hub/"; then
-            PACKS+=("hub")
+            PACKS+=("\"hub\"")
           fi
-          echo "packs=$(jq -c --null-input '$ARGS.positional' --args "${PACKS[@]}")" >> $GITHUB_OUTPUT
+          echo "packs=$(echo "[${PACKS[*]}]")" >> $GITHUB_OUTPUT
         shell: bash
 
   packsquash:
@@ -50,7 +50,7 @@ jobs:
             pack_directory = 'packs/${{ matrix.pack_name }}'
 
       - name: Debug PackSquash Output
-        run: ls -R
+        run: ls -R packs/${{ matrix.pack_name }}
 
       - name: Create Release for ${{ matrix.pack_name }}
         uses: softprops/action-gh-release@v2
@@ -58,4 +58,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
           tag_name: ${{ matrix.pack_name }}-v${{ github.run_number }}
-          files: ${{ matrix.pack_name }}/pack.zip
+          files: packs/${{ matrix.pack_name }}/pack.zip
