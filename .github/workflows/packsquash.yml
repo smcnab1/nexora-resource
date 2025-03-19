@@ -1,5 +1,9 @@
 name: Optimize resource pack
-on: [push]
+on:
+  push:
+    branches:
+      - main  # Only trigger on pushes to the main branch
+
 jobs:
   packsquash:
     name: Optimize resource pack
@@ -8,22 +12,22 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # A non-shallow repository clone is required
+          fetch-depth: 0  # A non-shallow repository clone is required
+          
       - name: Run PackSquash
         uses: ComunidadAylas/PackSquash-action@v4
         with:
-          # When changing the options passed to PackSquash, it may be a good idea to lock
-          # your workflow to a specific PackSquash version instead of "latest". This will
-          # prevent sudden failures when releases that introduce incompatible changes to
-          # the options file format are made, but will require you to manually update
-          # the PackSquash version your workflows use when a release occurs
           packsquash_version: latest
           options: |
             pack_directory = 'pack'
+            
+      - name: Debug PackSquash output
+        run: ls -R  # Verify the output directory and files
+
       - name: Tag and create release
         uses: softprops/action-gh-release@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}  # Ensure the token has repo permissions
         with:
           tag_name: action-v${{ github.run_number }}
-          files: /tmp/pack.zip
+          files: pack/pack.zip  # Ensure the correct file path
