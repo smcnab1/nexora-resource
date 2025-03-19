@@ -2,14 +2,14 @@ name: Optimize Resource Packs
 on:
   push:
     branches:
-      - main  # Only trigger on main branch
+      - main  # Trigger only on the main branch
     paths:
       - 'packs/prison/**'
       - 'packs/hub/**'  # Only trigger if files in these directories change
 
 jobs:
   determine-pack:
-    name: Determine Modified Packs
+    name: Determine Modified Pack
     runs-on: ubuntu-latest
     outputs:
       packs: ${{ steps.filter.outputs.packs }}
@@ -17,7 +17,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Detect Changed Packs
+      - name: Check for Modified Files
         id: filter
         run: |
           PACKS=()
@@ -32,8 +32,8 @@ jobs:
 
   packsquash:
     needs: determine-pack
-    if: ${{ needs.determine-pack.outputs.packs != '[]' }}  # Run only if changes were detected
-    name: Optimize Resource Packs
+    if: ${{ needs.determine-pack.outputs.packs != '[]' }}  # Run only if at least one pack is modified
+    name: Optimize Resource Pack
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -49,39 +49,13 @@ jobs:
           options: |
             pack_directory = 'packs/${{ matrix.pack_name }}'
 
-      - name: Move Pack to Common Folder
-        run: |
-          mkdir -p artifacts
-          mv packs/${{ matrix.pack_name }}/pack.zip artifacts/${{ matrix.pack_name }}.zip
+      - name: Debug PackSquash Output
+        run: ls -R
 
-      - name: Upload Pack as Artifact (for debugging)
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ matrix.pack_name }}-zip
-          path: artifacts/${{ matrix.pack_name }}.zip
-
-  release:
-    needs: [determine-pack, packsquash]
-    if: ${{ needs.determine-pack.outputs.packs != '[]' }}
-    name: Create Release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Download All Pack Artifacts
-        uses: actions/download-artifact@v3
-        with:
-          path: artifacts
-
-      - name: Debug: List Artifact Files
-        run: ls -R artifacts
-
-      - name: Create GitHub Release
+      - name: Create Release for ${{ matrix.pack_name }}
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          tag_name: release-v${{ github.run_number }}
-          files: artifacts/**/*.zip  # Upload all modified packs
-          body: "Optimized resource packs for latest changes."
+          tag_name: ${{ matrix.pack_name }}-v${{ github.run_number }}
+          files: ${{ matrix.pack_name }}/pack.zip
