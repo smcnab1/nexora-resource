@@ -2,10 +2,10 @@ name: Optimize Resource Packs
 on:
   push:
     branches:
-      - main  # Only trigger on the main branch
+      - main
     paths:
       - 'packs/prison/**'
-      - 'packs/hub/**'  # Only trigger if files in these directories change
+      - 'packs/hub/**'
 
 jobs:
   determine-pack:
@@ -17,7 +17,7 @@ jobs:
       - name: Checkout Repository with Full History
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch entire commit history to allow git diff
+          fetch-depth: 0
 
       - name: Check for Modified Files
         id: filter
@@ -37,7 +37,7 @@ jobs:
 
   packsquash:
     needs: determine-pack
-    if: ${{ needs.determine-pack.outputs.packs != '[]' }}  # Run only if at least one pack is modified
+    if: ${{ needs.determine-pack.outputs.packs != '[]' }}
     name: Optimize Resource Pack
     runs-on: ubuntu-latest
     strategy:
@@ -47,7 +47,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Again, ensure full history
+          fetch-depth: 0
 
       - name: Run PackSquash on ${{ matrix.pack_name }}
         uses: ComunidadAylas/PackSquash-action@v4
