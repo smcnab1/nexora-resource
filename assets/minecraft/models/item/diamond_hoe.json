@@ -1,0 +1,25 @@
+{
+    "parent":"item/handheld",
+    "textures":{
+        "layer0":"item/diamond_hoe"
+    },
+    "overrides":[
+        { "predicate": { "custom_model_data": 50001}, "model": "item/toolskins/atlantis/hoe"},
+        { "predicate": { "custom_model_data": 50002}, "model": "item/toolskins/celestial/hoe"},
+        { "predicate": { "custom_model_data": 50003}, "model": "item/toolskins/crimson/hoe"},
+        { "predicate": { "custom_model_data": 50004}, "model": "item/toolskins/devil/hoe"},
+        { "predicate": { "custom_model_data": 50005}, "model": "item/toolskins/emerald/hoe"},
+        { "predicate": { "custom_model_data": 50006}, "model": "item/toolskins/halloween/hoe"},
+        { "predicate": { "custom_model_data": 50007}, "model": "item/toolskins/heaven/hoe"},
+        { "predicate": { "custom_model_data": 50008}, "model": "item/toolskins/monster/hoe"},
+        { "predicate": { "custom_model_data": 50009}, "model": "item/toolskins/moon/hoe"},
+        { "predicate": { "custom_model_data": 50010}, "model": "item/toolskins/mud/hoe"},
+        { "predicate": { "custom_model_data": 50011}, "model": "item/toolskins/nether/hoe"},
+        { "predicate": { "custom_model_data": 50012}, "model": "item/toolskins/panther/hoe"},
+        { "predicate": { "custom_model_data": 50013}, "model": "item/toolskins/pegasus/hoe"},
+        { "predicate": { "custom_model_data": 50014}, "model": "item/toolskins/radiant/hoe"},
+        { "predicate": { "custom_model_data": 50015}, "model": "item/toolskins/thunder/hoe"},
+        { "predicate": { "custom_model_data": 50016}, "model": "item/toolskins/twilight/hoe"},
+        { "predicate": { "custom_model_data": 50017}, "model": "item/toolskins/warrior/hoe"}
+    ]
+}
